@@ -80,5 +80,32 @@ def get (url):
     req = 'GET {} HTTP/1.1\r\nhost: {}\r\nConnection: close\r\n\r\n'.format(path, host)
     s.send(req.encode('utf-8'))
 
+    response = response_by_socket(s)
+    r = response.decode('utf-8')
+
+    status_code, headers, body = parsed_response(r)
+    if status_code == 301:
+        url = headers['Location']
+        return get(url)
+
+    return status_code, headers, body
+
+
+def response_by_socket(s):
+    res = b''
+    buffer_size = 2014
+    while True:
+        r = s.recv(buffer_size)
+        if (len(r) > 0):
+            res  = res + r
+        elif (len(r) == 0):
+            break
+
+    return res
+
+
+
+def parsed_response():
+
 
 
