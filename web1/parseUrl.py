@@ -64,9 +64,9 @@ def test_parse_url():
 # 最后返回 socket的实例
 def socket_by_protocol(protocol):
     if (protocol.find('https"//') > -1):
-        s =  socket.socket()
+        s =  ssl.wrap_socket(socket.socket())
     elif (protocol == 'http'):
-        s = ssl.wrap_socket(socket.socket())
+        s = socket.socket()
     return s
 
 
@@ -75,7 +75,8 @@ def get (url):
     protocol, host, port, path= parse_url(url)
 
     s = socket_by_protocol(protocol)
-    s.connect((host, port))
+    s.connect((host, int(port)))
+
 
     req = 'GET {} HTTP/1.1\r\nhost: {}\r\nConnection: close\r\n\r\n'.format(path, host)
     s.send(req.encode('utf-8'))
@@ -83,9 +84,10 @@ def get (url):
     response = response_by_socket(s)
     r = response.decode('utf-8')
 
-    status_code, headers, body = parsed_response(r)
-    if status_code == 301:
+    status_code, headers, body =parsed_response(r)
+    if status_code in ['301','302']:
         url = headers['Location']
+
         return get(url)
 
     return status_code, headers, body
@@ -105,7 +107,22 @@ def response_by_socket(s):
 
 
 
-def parsed_response():
+
+
+def parsed_response(r):
+    header, body = r.split('\r\n\r\n', 1)
+    header_list = header.split('\r\n')
+    status_code =  header_list[0].split(  )[1]
+    rest = header_list[1:]
+    headers = {}
+
+    for item in rest:
+        key = item.split(':',1)[0]
+        value = item.split(':',1)[1]
+        headers[key] = value
+
+    return  status_code, headers, body
 
 
 
+get('www.baidu.com/sss')
