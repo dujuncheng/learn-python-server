@@ -1,3 +1,4 @@
+
 import json
 
 
@@ -24,7 +25,7 @@ class Model(object):
     @classmethod
     def db_path(cls):
         classname = cls.__name__
-        path =  '{}.txt'.format(classname)
+        path =  '../db/{}.txt'.format(classname)
         return path
 
     @classmethod
