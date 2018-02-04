@@ -107,6 +107,7 @@ def run(host='', port=3000):
             # 监听 接受 读取请求数据 解码成字符串
             s.listen(5)
             connection, address = s.accept()
+
             r = connection.recv(1000)
             r = r.decode('utf-8')
             log('原始请求', r)
@@ -128,8 +129,9 @@ def run(host='', port=3000):
             connection.close()
 
 
+
+
 if __name__ == '__main__':
-    # 生成配置并且运行程序
     config = dict(
         host='',
         port=3000,

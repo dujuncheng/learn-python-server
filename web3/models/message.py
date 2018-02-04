@@ -1,4 +1,4 @@
-from models import Model
+from ..models import Model
 
 class Message(Model):
     def __init__(self, form):
